@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lucky Slots</title>
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+font-family: 'Arial', sans-serif;
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+min-height: 100vh;
+display: flex;
+justify-content: center;
+align-items: center;
+padding: 20px;
+}
+
+.container {
+background: linear-gradient(145deg, #2d1b4e, #1a0f2e);
+border-radius: 30px;
+padding: 40px;
+box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+max-width: 500px;
+width: 100%;
+}
+
+h1 {
+text-align: center;
+color: #ffd700;
+font-size: 2.5em;
+margin-bottom: 10px;
+text-shadow: 0 0 20px rgba(255,215,0,0.5);
+}
+
+.subtitle {
+text-align: center;
+color: #fff;
+margin-bottom: 30px;
+opacity: 0.8;
+}
+
+.balance-display {
+background: rgba(255,255,255,0.1);
+padding: 15px;
+border-radius: 15px;
+text-align: center;
+margin-bottom: 30px;
+border: 2px solid rgba(255,215,0,0.3);
+}
+
+.balance-display h2 {
+color: #ffd700;
+font-size: 1.2em;
+margin-bottom: 5px;
+}
+
+.balance-amount {
+color: #fff;
+font-size: 2em;
+font-weight: bold;
+}
+
+.slots-container {
+display: flex;
+justify-content: center;
+gap: 15px;
+margin: 30px 0;
+padding: 20px;
+background: rgba(0,0,0,0.3);
+border-radius: 20px;
+}
+
+.reel {
+width: 100px;
+height: 100px;
+background: white;
+border-radius: 15px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 4em;
+box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+transition: transform 0.1s;
+}
+
+.reel.spinning {
+animation: spin 0.1s linear infinite;
+}
+
+@keyframes spin {
+0%, 100% { transform: translateY(0); }
+50% { transform: translateY(-10px); }
+}
+
+.controls {
+display: flex;
+gap: 10px;
+margin-bottom: 20px;
+justify-content: center;
+align-items: center;
+flex-wrap: wrap;
+}
+
+.bet-control {
+display: flex;
+align-items: center;
+gap: 10px;
+background: rgba(255,255,255,0.1);
+padding: 10px 15px;
+border-radius: 10px;
+}
+
+.bet-control label {
+color: #ffd700;
+font-weight: bold;
+}
+
+.bet-control input {
+width: 80px;
+padding: 8px;
+border-radius: 8px;
+border: 2px solid #ffd700;
+background: rgba(255,255,255,0.9);
+font-size: 1em;
+text-align: center;
+}
+
+.sound-control {
+display: flex;
+align-items: center;
+gap: 10px;
+background: rgba(255,255,255,0.06);
+padding: 8px 12px;
+border-radius: 10px;
+border: 1px solid rgba(255,255,255,0.06);
+color: #ffd700;
+font-weight: bold;
+}
+
+.sound-toggle {
+background: rgba(255,255,255,0.95);
+border: none;
+padding: 6px 10px;
+border-radius: 8px;
+cursor: pointer;
+font-weight: bold;
+color: #2d1b4e;
+min-width: 64px;
+}
+
+button {
+padding: 15px 40px;
+font-size: 1.2em;
+font-weight: bold;
+border: none;
+border-radius: 15px;
+cursor: pointer;
+transition: all 0.3s;
+width: 100%;
+margin-top: 10px;
+}
+
+.spin-btn {
+background: linear-gradient(135deg, #ffd700, #ffed4e);
+color: #2d1b4e;
+box-shadow: 0 5px 20px rgba(255,215,0,0.4);
+}
+
+.spin-btn:hover:not(:disabled) {
+transform: translateY(-2px);
+box-shadow: 0 8px 25px rgba(255,215,0,0.6);
+}
+
+.spin-btn:disabled {
+background: #666;
+cursor: not-allowed;
+opacity: 0.5;
+}
+
+.message {
+text-align: center;
+margin-top: 20px;
+padding: 15px;
+border-radius: 10px;
+font-size: 1.2em;
+font-weight: bold;
+min-height: 50px;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.message.win {
+background: rgba(76,175,80,0.3);
+color: #4caf50;
+border: 2px solid #4caf50;
+animation: pulse 0.5s;
+}
+
+.message.lose {
+background: rgba(244,67,54,0.3);
+color: #f44336;
+border: 2px solid #f44336;
+}
+
+@keyframes pulse {
+0%, 100% { transform: scale(1); }
+50% { transform: scale(1.05); }
+}
+
+.paytable {
+margin-top: 30px;
+background: rgba(255,255,255,0.1);
+padding: 20px;
+border-radius: 15px;
+}
+
+.paytable h3 {
+color: #ffd700;
+margin-bottom: 15px;
+text-align: center;
+}
+
+.paytable-row {
+display: flex;
+justify-content: space-between;
+color: white;
+padding: 8px 0;
+border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.paytable-row:last-child {
+border-bottom: none;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🎰 LUCKY SLOTS</h1>
+<p class="subtitle">Spin to Win!</p>
+
+<div class="balance-display">
+<h2>Your Balance</h2>
+<div class="balance-amount">$<span id="balance">1000</span></div>
+</div>
+
+<div class="slots-container">
+<div class="reel" id="reel1">🍒</div>
+<div class="reel" id="reel2">🍋</div>
+<div class="reel" id="reel3">🍊</div>
+</div>
+
+<div class="controls">
+<div class="bet-control">
+<label for="bet">Bet:</label>
+<input type="number" id="bet" value="10" min="1" max="100">
+</div>
+
+<div class="sound-control" title="Toggle sound">
+<span>Sound:</span>
+<button id="soundToggle" class="sound-toggle" aria-pressed="true">🔊 ON</button>
+</div>
+</div>
+
+<button class="spin-btn" id="spinBtn">SPIN</button>
+
+<div class="message" id="message"></div>
+
+<div class="paytable">
+<h3>💰 Paytable</h3>
+<div class="paytable-row">
+<span>🍒🍒🍒</span>
+<span>50x bet</span>
+</div>
+<div class="paytable-row">
+<span>🍋🍋🍋</span>
+<span>25x bet</span>
+</div>
+<div class="paytable-row">
+<span>🍊🍊🍊</span>
+<span>20x bet</span>
+</div>
+<div class="paytable-row">
+<span>🍇🍇🍇</span>
+<span>15x bet</span>
+</div>
+<div class="paytable-row">
+<span>7️⃣7️⃣7️⃣</span>
+<span>100x bet</span>
+</div>
+<div class="paytable-row">
+<span>Any 2 matching</span>
+<span>2x bet</span>
+</div>
+</div>
+</div>
+
+<script>
+const symbols = ['🍒', '🍋', '🍊', '🍇', '7️⃣', '💎'];
+let balance = 1000;
+let isSpinning = false;
+
+const reel1 = document.getElementById('reel1');
+const reel2 = document.getElementById('reel2');
+const reel3 = document.getElementById('reel3');
+const spinBtn = document.getElementById('spinBtn');
+const balanceDisplay = document.getElementById('balance');
+const betInput = document.getElementById('bet');
+const message = document.getElementById('message');
+const soundToggle = document.getElementById('soundToggle');
+
+/* ---------------------------
+   Sound state (persisted)
+   --------------------------- */
+let soundEnabled = true;
+try {
+  const saved = localStorage.getItem('slots_sound');
+  if (saved !== null) soundEnabled = JSON.parse(saved);
+} catch (e) { /* ignore parse errors */ }
+
+function updateSoundUI() {
+  if (soundEnabled) {
+    soundToggle.textContent = '🔊 ON';
+    soundToggle.setAttribute('aria-pressed', 'true');
+    soundToggle.style.background = 'rgba(255,255,255,0.95)';
+  } else {
+    soundToggle.textContent = '🔇 OFF';
+    soundToggle.setAttribute('aria-pressed', 'false');
+    soundToggle.style.background = 'rgba(255,255,255,0.85)';
+  }
+}
+updateSoundUI();
+
+/* ---------------------------
+   Web Audio: generated sounds
+   --------------------------- */
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+let clickBuffer = null;
+
+async function initAudio() {
+  if (!AudioCtx) return;
+  if (!soundEnabled) return;
+  if (audioCtx) return;
+  audioCtx = new AudioCtx();
+  // create a short click/noise buffer (~20ms)
+  const sampleRate = audioCtx.sampleRate;
+  const length = Math.floor(sampleRate * 0.02);
+  const buffer = audioCtx.createBuffer(1, length, sampleRate);
+  const data = buffer.getChannelData(0);
+  // generate decaying noise pulse
+  for (let i = 0; i < length; i++) {
+    const decay = Math.exp(-30 * i / length);
+    data[i] = (Math.random() * 2 - 1) * decay * 0.8;
+  }
+  clickBuffer = buffer;
+}
+
+function resumeAudioIfNeeded() {
+  if (!audioCtx) return;
+  if (audioCtx.state === 'suspended' && typeof audioCtx.resume === 'function') {
+    audioCtx.resume().catch(() => {/* ignore */});
+  }
+}
+
+function suspendAudioIfNeeded() {
+  if (!audioCtx) return;
+  if (audioCtx.state === 'running' && typeof audioCtx.suspend === 'function') {
+    audioCtx.suspend().catch(() => {/* ignore */});
+  }
+}
+
+function playClick(volume = 0.3) {
+  if (!soundEnabled) return;
+  try {
+    if (!audioCtx || !clickBuffer) return;
+    const source = audioCtx.createBufferSource();
+    source.buffer = clickBuffer;
+    const gain = audioCtx.createGain();
+    gain.gain.value = volume;
+    source.connect(gain).connect(audioCtx.destination);
+    source.start();
+    source.onended = () => {
+      try { source.disconnect(); gain.disconnect(); } catch(e){}
+    };
+  } catch (e) { /* ignore audio errors */ }
+}
+
+function playLoseSound() {
+  if (!soundEnabled) return;
+  try {
+    if (!audioCtx) return;
+    const now = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(120, now);
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(0.5, now + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+    osc.connect(gain).connect(audioCtx.destination);
+    osc.start(now);
+    osc.stop(now + 0.45);
+    osc.onended = () => { try { osc.disconnect(); gain.disconnect(); } catch(e){} };
+  } catch (e) { /* ignore */ }
+}
+
+function playWinSound() {
+  if (!soundEnabled) return;
+  try {
+    if (!audioCtx) return;
+    const now = audioCtx.currentTime;
+    const gain = audioCtx.createGain();
+    gain.gain.setValueAtTime(0, now);
+    gain.connect(audioCtx.destination);
+
+    const notes = [880, 1108.73, 1318.51, 1760]; // A5, C#6, E6, A6 (simple arpeggio)
+    const noteDuration = 0.18;
+    notes.forEach((freq, i) => {
+      const osc = audioCtx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + i * noteDuration);
+      const noteGain = audioCtx.createGain();
+      noteGain.gain.setValueAtTime(0.0001, now + i * noteDuration);
+      noteGain.gain.exponentialRampToValueAtTime(0.8, now + i * noteDuration + 0.02);
+      noteGain.gain.exponentialRampToValueAtTime(0.0001, now + (i + 1) * noteDuration);
+      osc.connect(noteGain).connect(gain);
+      osc.start(now + i * noteDuration);
+      osc.stop(now + (i + 1) * noteDuration);
+      osc.onended = () => { try { osc.disconnect(); noteGain.disconnect(); } catch(e){} };
+    });
+
+    gain.gain.linearRampToValueAtTime(1.0, now + 0.01);
+    gain.gain.linearRampToValueAtTime(0.0001, now + notes.length * noteDuration + 0.05);
+    setTimeout(() => { try { gain.disconnect(); } catch(e){} }, (notes.length * noteDuration + 200));
+  } catch (e) { /* ignore */ }
+}
+
+/* ---------------------------
+   Game logic
+   --------------------------- */
+function updateBalance() {
+balanceDisplay.textContent = balance;
+}
+
+function getRandomSymbol() {
+return symbols[Math.floor(Math.random() * symbols.length)];
+}
+
+function checkWin(s1, s2, s3, bet) {
+if (s1 === s2 && s2 === s3) {
+const payouts = {
+'🍒': 50,
+'🍋': 25,
+'🍊': 20,
+'🍇': 15,
+'7️⃣': 100,
+'💎': 75
+};
+return bet * (payouts[s1] || 10);
+}
+
+if (s1 === s2 || s2 === s3 || s1 === s3) {
+return bet * 2;
+}
+
+return 0;
+}
+
+function showMessage(text, isWin) {
+message.textContent = text;
+message.className = 'message ' + (isWin ? 'win' : 'lose');
+}
+
+async function spin() {
+if (isSpinning) return;
+
+const bet = parseInt(betInput.value);
+
+if (bet > balance) {
+showMessage('Not enough balance!', false);
+return;
+}
+
+if (bet < 1) {
+showMessage('Bet must be at least $1', false);
+return;
+}
+
+// initialize audio (user gesture -> allowed to start/resume audio)
+await initAudio();
+resumeAudioIfNeeded();
+
+isSpinning = true;
+spinBtn.disabled = true;
+balance -= bet;
+updateBalance();
+message.textContent = '';
+message.className = 'message';
+
+reel1.classList.add('spinning');
+reel2.classList.add('spinning');
+reel3.classList.add('spinning');
+
+// spinning animation loop with clicks
+for (let i = 0; i < 20; i++) {
+reel1.textContent = getRandomSymbol();
+reel2.textContent = getRandomSymbol();
+reel3.textContent = getRandomSymbol();
+playClick(0.18);
+await new Promise(resolve => setTimeout(resolve, 50));
+}
+
+const final1 = getRandomSymbol();
+const final2 = getRandomSymbol();
+const final3 = getRandomSymbol();
+
+await new Promise(resolve => setTimeout(resolve, 200));
+reel1.textContent = final1;
+reel1.classList.remove('spinning');
+playClick(0.22);
+
+await new Promise(resolve => setTimeout(resolve, 200));
+reel2.textContent = final2;
+reel2.classList.remove('spinning');
+playClick(0.22);
+
+await new Promise(resolve => setTimeout(resolve, 200));
+reel3.textContent = final3;
+reel3.classList.remove('spinning');
+playClick(0.28);
+
+const winAmount = checkWin(final1, final2, final3, bet);
+
+if (winAmount > 0) {
+balance += winAmount;
+updateBalance();
+showMessage(`🎉 YOU WIN $${winAmount}!`, true);
+// play celebratory melody
+playWinSound();
+} else {
+showMessage('Try again!', false);
+// play a short low 'lose' sound
+playLoseSound();
+}
+
+if (balance === 0) {
+showMessage('Game Over! Refresh to restart.', false);
+}
+
+isSpinning = false;
+spinBtn.disabled = false;
+}
+
+spinBtn.addEventListener('click', spin);
+
+betInput.addEventListener('input', function() {
+if (this.value > balance) {
+this.value = balance;
+}
+});
+
+/* ---------------------------
+   Sound toggle behavior
+   --------------------------- */
+soundToggle.addEventListener('click', async function () {
+  soundEnabled = !soundEnabled;
+  try { localStorage.setItem('slots_sound', JSON.stringify(soundEnabled)); } catch(e){}
+  updateSoundUI();
+  if (soundEnabled) {
+    await initAudio();
+    resumeAudioIfNeeded();
+  } else {
+    // suspend audio to save resources
+    suspendAudioIfNeeded();
+  }
+});
+</script>
+</body>
+</html>
